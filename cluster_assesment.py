@@ -6,6 +6,20 @@ class agglo():
         self.X = X
 
     def knife(self,min_k,max_k):
+
+        # DESCRIPTION:
+
+        #     Build selected range of clusters and represent knife metric to ich of them
+        #     'Knifes' should be similar to ich other and have good shape without leakeges
+
+        # ARGUMENTS:
+
+        #     min_k - minimum amount of cluster
+        #     max_k - maximum amount of cluster
+
+        # RETURNE:
+
+        #     Diagram of 'knife' metric
         
         from sklearn.cluster import AgglomerativeClustering
         from sklearn.metrics import silhouette_samples, silhouette_score
@@ -65,6 +79,10 @@ class agglo():
 
     def knife_df(self):
 
+        # DESCRIPTION:
+
+        #     Make dataframe with information from knife method
+
         import pandas as pd
         
         df = pd.DataFrame({
@@ -75,7 +93,17 @@ class agglo():
         return df
     
     def distance(self,min_d=1,max_d=5,range_d=10,save=None):
-        
+
+        # DESCRIPTION:
+
+        #     Build diagram with distance correlation of data in different cluster
+
+        # ARGUMENTS:
+
+        #     min_d - minimum level of distance
+        #     max_d - maximum level of distance
+        #     range_d - amount of tested distances
+
         import seaborn as sns
         import pandas as pd
         import numpy as np
@@ -114,6 +142,10 @@ class agglo():
         plt.show()
 
     def distance_df(self):
+
+        # DESCRIPTION:
+
+        #     Make dataframe with information from distance method
         
         import pandas as pd
 
@@ -126,6 +158,10 @@ class agglo():
         return df
 
     def linkage(self,save=None):
+
+        # DESCRIPTION:
+
+        #     Check the optimal amount of cluster by scipy.cluster.hierarchy
 
         import numpy as np
         import matplotlib.pyplot as plt
@@ -144,6 +180,10 @@ class agglo():
 
     def minmax(self):
 
+        # DESCRIPTION:
+
+        #     Preprocess the data with MinMaxScaler
+
         from sklearn.preprocessing import MinMaxScaler
         import pandas as pd
         
@@ -152,6 +192,14 @@ class agglo():
         self.X = pd.DataFrame(scaled_data,self.X.index)
         
     def dendrogram(self,k,save=None):
+
+        # DESCRIPTION:
+
+        #     By using this diagram possible make assesment of choosen amount of cluster on actual data
+
+        # ARGUMENTS:
+
+        #     k - choosen amount of cluster
         
         import numpy as np
         from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
@@ -173,6 +221,16 @@ class agglo():
         plt.show()
         
     def build_knife(self,n,target='cluster',alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Build selected amount of cluster
+
+        # ARGUMENTS:
+
+        #     n - amount of cluster
+        #     target - parameter hue for scatterplot to vizualize clusters on PCA data
+        #     alpha - parameter alpha for scatterplot
         
         from sklearn.preprocessing import StandardScaler
         from sklearn.cluster import AgglomerativeClustering
@@ -209,6 +267,14 @@ class agglo():
 
     def pie(self,cluster,save=None):
 
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
+
         import seaborn as sns
         import matplotlib.pyplot as plt
 
@@ -237,7 +303,17 @@ class agglo():
 
         plt.show()
 
-    def heat(self,cluster,sh=12,vi=4,save=None): 
+    def heat(self,cluster,sh=12,vi=4,save=None):
+
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
+        #     sh - height of diagram
+        #     vi - length of diagram
 
         from sklearn.preprocessing import MinMaxScaler
         import seaborn as sns
@@ -270,6 +346,16 @@ class agglo():
         return ax
 
     def feature_corr(self,cluster,sh=12,vi=4,dpi=200,target='cluster',save=None):
+
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
+        #     sh - height of diagram
+        #     vi - length of diagram
 
         import seaborn as sns
         import matplotlib.pyplot as plt
