@@ -1,5 +1,34 @@
 class agglo():
+    '''
+    This class help to identify best amoun of clusters required for raw data to be divided for
+    For this purpose used Aglomerative clusterisation and required following step:
 
+        - present algorithm is very sensetive and required MinMax data preprocessing
+        wich can be done by method minmax
+
+        - main method is knife wich is building diagram wich includes silhuet coefficient for ich particular element of data
+        and represent it in different cluster. On diagram is also draph average silhuete score line. Respectly to this to
+        select correct amount of cluster it is required to visualy check silhuet of all 'knifes', they shape, length, leakege presents
+        and corresponding to average silhuete score line.
+
+        Best amount of cluster should show on diagram equal to ich other shape, length
+        of knifes without any leakega with the biggest amount of elements higher than average silhuete score line
+        Average silhuete score is close to 1.0
+
+        - next method is distance wich is building diagram wich is includes silhuet and distance_threshold,
+        both parameter required to be on maximum
+
+    To build required clusterisation used metod build_knife and build_simple (build on PCA preprocessed data)
+    Final dataframe posible to return by agglo.result or agglo.result_simple argument
+
+    It is posible to check data using PCA by method simple_check with different mode and parameters
+
+    Ordianry method for cluster assesment build informative diagram:
+
+        linkage - Check the optimal amount of cluster by scipy.cluster.hierarchy
+        dendrogram - By using this diagram possible make assesment of choosen amount of cluster on actual data
+        pie,heat,feature_corr - Build feature correlation diagram for 'knife' or 'simple' algorithm (use after build method)
+    '''
     def __init__(self,X):
         
         self.df = X
@@ -16,10 +45,6 @@ class agglo():
 
         #     min_k - minimum amount of cluster
         #     max_k - maximum amount of cluster
-
-        # RETURNE:
-
-        #     Diagram of 'knife' metric
         
         from sklearn.cluster import AgglomerativeClustering
         from sklearn.metrics import silhouette_samples, silhouette_score
@@ -356,6 +381,7 @@ class agglo():
         #     cluster - tested mode
         #     sh - height of diagram
         #     vi - length of diagram
+        #     target - hue for scatterplot
 
         import seaborn as sns
         import matplotlib.pyplot as plt
@@ -377,6 +403,16 @@ class agglo():
         plt.show()
 
     def simple_check(self,cluster='origin',target='cluster',alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Check data with PCA preprocessing including DataFrame builded in build_knife and build_simple method
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode, data from wich DataFrame will be taken
+        #     target - hue for scatterplot diagram in case of using cluster = 'origin'
+        #     alpha - alpha for scatterplot
 
         from sklearn.preprocessing import StandardScaler
         from sklearn.decomposition import PCA
@@ -416,6 +452,16 @@ class agglo():
 
     def build_simple(self,n_clusters,target='cluster',alpha=0.5):
 
+        # DESCRIPTION:
+
+        #     Build selected amount of cluster based on PCA
+
+        # ARGUMENTS:
+
+        #     n_clusters - amount of cluster
+        #     target - parameter hue for scatterplot to vizualize clusters on PCA data
+        #     alpha - parameter alpha for scatterplot
+
         from sklearn.preprocessing import StandardScaler
         from sklearn.cluster import AgglomerativeClustering
         from sklearn.decomposition import PCA
@@ -450,13 +496,51 @@ class agglo():
 
 
 class k_mean():
+    '''
+    This class help to identify best amoun of clusters required for raw data to be divided for
+    For this purpose used K-mean clusterisation and required following step:
 
+        - present algorithm is not too much sensetive and required ordinary preprocessing like StandardScaler
+        wich can be done by method standard
+
+        - main method is knife wich is building diagram wich includes silhuet coefficient for ich particular element of data
+        and represent it in different cluster. On diagram is also draph average silhuete score line. Respectly to this to
+        select correct amount of cluster it is required to visualy check silhuet of all 'knifes', they shape, length, leakege presents
+        and corresponding to average silhuete score line.
+
+        Best amount of cluster should show on diagram equal to ich other shape, length
+        of knifes without any leakega with the biggest amount of elements higher than average silhuete score line
+        Average silhuete score is close to 1.0
+
+        - next method is mount wich is building diagram wich is includes squered_distances and gap
+
+    To build required clusterisation used metod build_knife and build_simple (build on PCA preprocessed data)
+    Final dataframe posible to return by k_mean.result or k_mean.result_simple argument
+
+    It is posible to check data using PCA by method simple_check with different mode and parameters
+
+    Ordianry method for cluster assesment build informative diagram:
+
+        linkage - Check the optimal amount of cluster by scipy.cluster.hierarchy
+        dendrogram - By using this diagram possible make assesment of choosen amount of cluster on actual data
+        pie,heat,feature_corr - Build feature correlation diagram for 'knife' or 'simple' algorithm (use after build method)
+    '''
     def __init__(self,X):
 
         self.df = X
         self.X = X
 
     def knife(self,min_n,max_n):
+
+        # DESCRIPTION:
+
+        #     Build selected range of clusters and represent knife metric to ich of them
+        #     'Knifes' should be similar to ich other and have good shape without leakeges
+
+        # ARGUMENTS:
+
+        #     min_n - minimum amount of cluster
+        #     max_n - maximum amount of cluster
         
         from sklearn.cluster import KMeans
         from sklearn.metrics import silhouette_samples, silhouette_score
@@ -520,6 +604,10 @@ class k_mean():
 
     def knife_df(self):
 
+        # DESCRIPTION:
+
+        #     Make dataframe with information from knife method
+
         import pandas as pd
         
         df = pd.DataFrame({
@@ -532,6 +620,15 @@ class k_mean():
         return df
 
     def mount(self,min_n,max_n,save=None):
+
+        # DESCRIPTION:
+
+        #     Build diagram with squared distance correlation of data in different cluster
+
+        # ARGUMENTS:
+
+        #     min_n - minimum cluster
+        #     max_n - maximum cluster
 
         import matplotlib.pyplot as plt
         import pandas as pd
@@ -570,6 +667,10 @@ class k_mean():
 
     def mount_df(self):
 
+        # DESCRIPTION:
+
+        #     Make dataframe with information from mount method
+
         import pandas as pd
         
         df = pd.DataFrame({
@@ -583,6 +684,10 @@ class k_mean():
 
     def standard(self):
 
+        # DESCRIPTION:
+
+        #     Preprocess the data with StandardScaler
+
         from sklearn.preprocessing import StandardScaler
         import pandas as pd
         
@@ -591,6 +696,14 @@ class k_mean():
         self.X = pd.DataFrame(scaled_data,self.X.index)
 
     def dendrogram(self,k,save=None):
+
+        # DESCRIPTION:
+
+        #     By using this diagram possible make assesment of choosen amount of cluster on actual data
+
+        # ARGUMENTS:
+
+        #     k - choosen amount of cluster
         
         import numpy as np
         from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
@@ -612,6 +725,16 @@ class k_mean():
         plt.show()
 
     def build_knife(self,n,target='cluster',alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Build selected amount of cluster
+
+        # ARGUMENTS:
+
+        #     n - amount of cluster
+        #     target - parameter hue for scatterplot to vizualize clusters on PCA data
+        #     alpha - parameter alpha for scatterplot
         
         from sklearn.cluster import KMeans
         from sklearn.decomposition import PCA
@@ -642,6 +765,16 @@ class k_mean():
         plt.show()
 
     def build_simple(self,n_clusters,target='cluster',alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Build selected amount of cluster based on PCA
+
+        # ARGUMENTS:
+
+        #     n_clusters - amount of cluster
+        #     target - parameter hue for scatterplot to vizualize clusters on PCA data
+        #     alpha - parameter alpha for scatterplot
 
         from sklearn.preprocessing import StandardScaler
         from sklearn.cluster import AgglomerativeClustering
@@ -675,6 +808,10 @@ class k_mean():
 
     def linkage(self,save=None):
 
+        # DESCRIPTION:
+
+        #     Check the optimal amount of cluster by scipy.cluster.hierarchy
+
         import numpy as np
         import matplotlib.pyplot as plt
         from scipy.cluster.hierarchy import dendrogram, linkage
@@ -690,6 +827,14 @@ class k_mean():
         plt.show()
 
     def pie(self,cluster,save=None):
+
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
 
         import seaborn as sns
         import matplotlib.pyplot as plt
@@ -719,7 +864,17 @@ class k_mean():
 
         plt.show()
 
-    def heat(self,cluster,sh=12,vi=4,save=None): 
+    def heat(self,cluster,sh=12,vi=4,save=None):
+
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
+        #     sh - height of diagram
+        #     vi - length of diagram
 
         from sklearn.preprocessing import MinMaxScaler
         import seaborn as sns
@@ -754,6 +909,17 @@ class k_mean():
 
     def feature_corr(self,cluster,sh=12,vi=4,dpi=200,target='cluster',save=None):
 
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
+        #     sh - height of diagram
+        #     vi - length of diagram
+        #     target - hue for scatterplot
+
         import seaborn as sns
         import matplotlib.pyplot as plt
 
@@ -774,6 +940,16 @@ class k_mean():
         plt.show()
 
     def simple_check(self,cluster='origin',target='cluster',alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Check data with PCA preprocessing including DataFrame builded in build_knife and build_simple method
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode, data from wich DataFrame will be taken
+        #     target - hue for scatterplot diagram in case of using cluster = 'origin'
+        #     alpha - alpha for scatterplot
 
         from sklearn.preprocessing import StandardScaler
         from sklearn.decomposition import PCA
@@ -810,6 +986,35 @@ class k_mean():
 
 
 class dbscan():
+    '''
+    This class help to identify best amoun of clusters required for raw data to be divided for
+    For this purpose used DBscan clusterisation and required following step:
+
+        - present algorithm is not too much sensetive and required ordinary preprocessing like StandardScaler
+        wich can be done by method standard
+
+        - main method is knife wich is building diagram wich includes silhuet coefficient for ich particular element of data
+        and represent it in different cluster. On diagram is also draph average silhuete score line. Respectly to this to
+        select correct amount of cluster it is required to visualy check silhuet of all 'knifes', they shape, length, leakege presents
+        and corresponding to average silhuete score line.
+
+        Best amount of cluster should show on diagram equal to ich other shape, length
+        of knifes without any leakega with the biggest amount of elements higher than average silhuete score line
+        Average silhuete score is close to 1.0
+
+        - next method is outliers wich is building diagram wich is showing amoun of outliers
+
+    To build required clusterisation used metod build_knife and build_simple (build on PCA preprocessed data)
+    Final dataframe posible to return by dbscan.result or dbscan.result_simple argument
+
+    It is posible to check data using PCA by method simple_check with different mode and parameters
+
+    Ordianry method for cluster assesment build informative diagram:
+
+        linkage - Check the optimal amount of cluster by scipy.cluster.hierarchy
+        dendrogram - By using this diagram possible make assesment of choosen amount of cluster on actual data
+        pie,heat,feature_corr - Build feature correlation diagram for 'knife' or 'simple' algorithm (use after build method)
+    '''
 
     def __init__(self,X):
         
@@ -819,6 +1024,22 @@ class dbscan():
         self.X = X
 
     def knife(self,mod = 'eps',min_eps=0.01,max_eps=1,range_eps=10,min_sample = 1,max_sample = 5,epsindot=0.5,dotineps=5):
+
+        # DESCRIPTION:
+
+        #     Build selected range of clusters and represent knife metric to ich of them
+        #     'Knifes' should be similar to ich other and have good shape without leakeges
+
+        # ARGUMENTS:
+
+        #     mod - different way for assesment density dependts on eps or dot
+        #     min_eps - minimum parameter for eps in case of use mod='eps'
+        #     max_eps - maximum parameter for eps in case of use mod='eps'
+        #     range_eps - amount of eps parameters tested for eps in case of use mod='eps'
+        #     min_sample - minimum amount of dots in area in case of use mod='dot'
+        #     max_sample - maximum amount of dots in area in case of use mod='dot'
+        #     epsindot - static parameter for eps in case of use mod='dot'
+        #     dotineps - static parameter for dot in case of use mod='eps'
         
         from sklearn.metrics import silhouette_samples, silhouette_score
         import matplotlib.pyplot as plt
@@ -906,6 +1127,17 @@ class dbscan():
                 continue
             
     def build_knife(self,eps=0.5,min_samples=5,target='cluster',alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Build clustariazated DataFrame based on selected parameter
+
+        # ARGUMENTS:
+
+        #     eps - parameter eps for identify area around dots
+        #     min_samples - quantity of dots in the eps area
+        #     target - parameter hue for scatterplot to vizualize clusters on PCA data
+        #     alpha - parameter alpha for scatterplot
         
         from sklearn.cluster import DBSCAN
         from sklearn.decomposition import PCA
@@ -936,6 +1168,17 @@ class dbscan():
         plt.show()
 
     def build_simple(self,eps=0.5,min_samples=5,target='cluster',alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Build clustariazated DataFrame based on selected parameter and PCA preprocessed data
+
+        # ARGUMENTS:
+
+        #     eps - parameter eps for identify area around dots
+        #     min_samples - quantity of dots in the eps area
+        #     target - parameter hue for scatterplot to vizualize clusters on PCA data
+        #     alpha - parameter alpha for scatterplot
 
         from sklearn.preprocessing import StandardScaler
         from sklearn.cluster import DBSCAN
@@ -969,6 +1212,16 @@ class dbscan():
         plt.show()
 
     def simple_check(self,cluster='origin',target='cluster',alpha=0.5):
+
+        # DESCRIPTION:
+
+        #     Check data with PCA preprocessing including DataFrame builded in build_knife and build_simple method
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode, data from wich DataFrame will be taken
+        #     target - hue for scatterplot diagram in case of using cluster = 'origin'
+        #     alpha - alpha for scatterplot
 
         from sklearn.decomposition import PCA
         import pandas as pd
@@ -1004,6 +1257,10 @@ class dbscan():
 
     def knife_df(self):
 
+        # DESCRIPTION:
+
+        #     Make dataframe with information from knife method
+
         import pandas as pd
 
         df = pd.DataFrame({
@@ -1016,6 +1273,14 @@ class dbscan():
         return df
     
     def outliers(self,percent=1,save=None):
+
+        # DESCRIPTION:
+
+        #     Build diagram to show amount of outliers based on tested parameter (eps or dot) in knife method
+
+        # ARGUMENTS:
+
+        #     percent - build hlines on diagram for better visualization
         
         import seaborn as sns
         import matplotlib.pyplot as plt
@@ -1031,6 +1296,10 @@ class dbscan():
             
     def standard(self):
 
+        # DESCRIPTION:
+
+        #     Preprocess the data with StandardScaler
+
         from sklearn.preprocessing import StandardScaler
         import pandas as pd
         
@@ -1039,6 +1308,10 @@ class dbscan():
         self.X = pd.DataFrame(scaled_data,self.X.index)
 
     def linkage(self,save=None):
+
+        # DESCRIPTION:
+
+        #     Check the optimal amount of cluster by scipy.cluster.hierarchy
 
         import numpy as np
         import matplotlib.pyplot as plt
@@ -1055,6 +1328,14 @@ class dbscan():
         plt.show()
 
     def pie(self,cluster,save=None):
+
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
 
         import seaborn as sns
         import matplotlib.pyplot as plt
@@ -1084,7 +1365,17 @@ class dbscan():
 
         plt.show()
 
-    def heat(self,cluster,sh=12,vi=4,save=None): 
+    def heat(self,cluster,sh=12,vi=4,save=None):
+
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
+        #     sh - height of diagram
+        #     vi - length of diagram
 
         from sklearn.preprocessing import MinMaxScaler
         import seaborn as sns
@@ -1118,6 +1409,17 @@ class dbscan():
         return ax
 
     def feature_corr(self,cluster,sh=12,vi=4,dpi=200,target='cluster',save=None):
+
+        # DESCRIPTION:
+
+        #     Build feature correlation diagram for 'knife' or 'simple' algorithm
+
+        # ARGUMENTS:
+
+        #     cluster - tested mode
+        #     sh - height of diagram
+        #     vi - length of diagram
+        #     target - hue for scatterplot
 
         import seaborn as sns
         import matplotlib.pyplot as plt
