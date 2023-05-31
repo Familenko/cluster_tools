@@ -1,5 +1,4 @@
-# Cluster_assesment
- Check and build one of cluster algorithm (Aglomerative, K-mean,DBscan)
+Check and build one of cluster algorithm (Aglomerative, K-mean,DBscan)
 
 This class help to identify best amoun of clusters required for raw data to be divided for
 For this purpose used Aglomerative, K-mean,DBscan clusterisations and required following step:
