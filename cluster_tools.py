@@ -184,9 +184,8 @@ class Clusterer():
 
         return df.transpose()
 
-
     @elapsed_time_decorator
-    def k_mean_mount(self,min_n,max_n,save=None):
+    def kmean_mount(self,min_n,max_n,save=None):
 
         # DESCRIPTION:
 
@@ -212,7 +211,6 @@ class Clusterer():
             ssd_mount.append(round(clusterer.inertia_,1))
             silhouette_mount.append(round(silhouette_score(self.X, cluster_labels),3),)
 
-
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 8))
 
         ax1.plot(range(min_n,max_n), ssd_mount, 'o--')
@@ -237,7 +235,7 @@ class Clusterer():
         return df.transpose()
 
     @elapsed_time_decorator
-    def k_mean_knife(self,min_n,max_n,step=1):
+    def kmean_knife(self,min_n,max_n,step=1):
 
         # DESCRIPTION:
 
@@ -310,7 +308,6 @@ class Clusterer():
             },index=range_n_clusters)
 
         return df.transpose()
-
 
     @elapsed_time_decorator
     def dbscan_outliers(self,percent=1,save=None):
@@ -438,9 +435,8 @@ class Clusterer():
 
         return df.transpose()
 
-
     @elapsed_time_decorator
-    def build_clusterer(self,clusterer,n_clusters=None,eps=None,min_samples=None,distance_threshold=None,target='cluster',alpha=0.5):
+    def build_clusterer(self,clusterer='kmean',param='n_clusters',value=2,target='cluster',alpha=0.5):
 
         # DESCRIPTION:
 
@@ -452,9 +448,21 @@ class Clusterer():
         #     target - parameter hue for scatterplot to vizualize clusters on PCA data
         #     alpha - parameter alpha for scatterplot
         
-        if clusterer == 'agglo'     :   self.clusterer = AgglomerativeClustering(n_clusters=n_clusters,distance_threshold=distance_threshold)
-        if clusterer == 'kmean'     :   self.clusterer = KMeans(n_clusters=n_clusters)
-        if clusterer == 'dbscan'    :   self.clusterer = DBSCAN(eps=eps,min_samples=min_samples)
+        if clusterer == 'agglo':
+            if param == 'n_clusters':
+                self.clusterer = AgglomerativeClustering(n_clusters=value)
+            elif param == 'distance_threshold':
+                self.clusterer = AgglomerativeClustering(distance_threshold=value)
+
+        elif clusterer == 'kmean':
+            if param == 'n_clusters':
+                self.clusterer = KMeans(n_clusters=value)
+
+        elif clusterer == 'dbscan':
+            if param == 'eps':
+                self.clusterer = DBSCAN(eps=value)
+            elif param == 'min_samples':
+                self.clusterer = DBSCAN(min_samples=value)
 
         cluster_labels = self.clusterer.fit_predict(self.X)
         
@@ -499,7 +507,6 @@ class Clusterer():
 
         self.scaler = scaler
         
-
     @elapsed_time_decorator
     def simple_check(self,mode='origin',target='cluster',alpha=0.5):
 
@@ -516,7 +523,7 @@ class Clusterer():
         if mode == 'origin':
             X = self.df
             df = self.df
-            target = self.df.columns[0]
+            target = self.df.[target]
 
         if mode == 'build':
             X = self.result
@@ -662,3 +669,5 @@ class Clusterer():
         if save =='save':
             plt.savefig('my_plot.png')
         plt.show()
+
+
