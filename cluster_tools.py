@@ -445,17 +445,11 @@ class Clusterer():
         return df.transpose()
 
     @elapsed_time_decorator
-    def build_clusterer(self,clusterer='kmean',param='n_clusters',value=2,target='cluster',alpha=0.5):
+    def build_clusterer(self,clusterer='kmean',param='n_clusters',value=2):
 
         # DESCRIPTION:
 
         #     Build selected amount of cluster
-
-        # ARGUMENTS:
-
-        #     n_clusters - amount of cluster
-        #     target - parameter hue for scatterplot to vizualize clusters on PCA data
-        #     alpha - parameter alpha for scatterplot
         
         if clusterer == 'agglo':
             if param == 'n_clusters':
